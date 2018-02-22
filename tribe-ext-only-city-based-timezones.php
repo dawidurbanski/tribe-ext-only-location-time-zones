@@ -78,7 +78,7 @@ if (
 				$mo_loaded = true;
 			}
 
-			$zonen = array();
+			$zones = array();
 			foreach ( timezone_identifiers_list() as $zone ) {
 				$zone = explode( '/', $zone );
 				if ( !in_array( $zone[0], $continents ) ) {
@@ -95,7 +95,7 @@ if (
 				$exists[4] = ( $exists[1] && $exists[3] );
 				$exists[5] = ( $exists[2] && $exists[3] );
 
-				$zonen[] = array(
+				$zones[] = array(
 					'continent'   => ( $exists[0] ? $zone[0] : '' ),
 					'city'        => ( $exists[1] ? $zone[1] : '' ),
 					'subcity'     => ( $exists[2] ? $zone[2] : '' ),
@@ -104,7 +104,7 @@ if (
 					't_subcity'   => ( $exists[5] ? translate( str_replace( '_', ' ', $zone[2] ), 'continents-cities' ) : '' )
 				);
 			}
-			usort( $zonen, '_wp_timezone_choice_usort_callback' );
+			usort( $zones, '_wp_timezone_choice_usort_callback' );
 
 			$structure = array();
 
@@ -112,7 +112,7 @@ if (
 				$structure[] = '<option selected="selected" value="">' . __( 'Select a city', 'tribe-ext-only-city-based-timezones' ) . '</option>';
 			}
 
-			foreach ( $zonen as $key => $zone ) {
+			foreach ( $zones as $key => $zone ) {
 				// Build value in an array to join later
 				$value = array( $zone['continent'] );
 
@@ -123,7 +123,7 @@ if (
 					// It's inside a continent group
 
 					// Continent optgroup
-					if ( !isset( $zonen[$key - 1] ) || $zonen[$key - 1]['continent'] !== $zone['continent'] ) {
+					if ( !isset( $zones[$key - 1] ) || $zones[$key - 1]['continent'] !== $zone['continent'] ) {
 						$label = $zone['t_continent'];
 						$structure[] = '<optgroup label="'. esc_attr( $label ) .'">';
 					}
@@ -148,7 +148,7 @@ if (
 				$structure[] = '<option ' . $selected . 'value="' . esc_attr( $value ) . '">' . esc_html( $display ) . "</option>";
 
 				// Close continent optgroup
-				if ( !empty( $zone['city'] ) && ( !isset($zonen[$key + 1]) || (isset( $zonen[$key + 1] ) && $zonen[$key + 1]['continent'] !== $zone['continent']) ) ) {
+				if ( !empty( $zone['city'] ) && ( !isset($zones[$key + 1]) || (isset( $zones[$key + 1] ) && $zones[$key + 1]['continent'] !== $zone['continent']) ) ) {
 					$structure[] = '</optgroup>';
 				}
 			}
