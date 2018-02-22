@@ -59,8 +59,8 @@ if (
 		 * This is a copy of wp_timezone_choice() with the UTC/GMT manual offset part of
 		 * it removed and our own text domain added.
 		 *
-		 * @see \wp_timezone_choice()
-		 * @see \tribe_events_timezone_choice()
+		 * @see wp_timezone_choice()
+		 * @see tribe_events_timezone_choice()
 		 *
 		 * @return string
 		 */
