@@ -49,121 +49,40 @@ if (
 			// Load plugin textdomain
 			load_plugin_textdomain( 'tribe-ext-only-city-based-timezones', false, basename( dirname( __FILE__ ) ) . '/languages/' );
 
-			add_filter( 'tribe_events_timezone_choice', array( $this, 'wp_timezone_choice_wo_manual_offsets' ), 10, 3 );
+			add_filter( 'tribe_events_timezone_choice', array( $this, 'wp_timezone_choice_wo_manual_offsets' ), 10, 2 );
 		}
 
 		/**
-		 * Build the <optgroup> list of timezone choices, including "UTC" and
-		 * all city-based timezones, excluding all manual offsets like "UTC+1".
+		 * Filter out the `<optgroup label="Manual Offsets">` from the list of
+		 * allowed timezone choices.
 		 *
-		 * This is a copy of wp_timezone_choice() with the UTC/GMT manual offset part of
-		 * it removed and our own text domain added.
-		 *
-		 * @see wp_timezone_choice()
 		 * @see tribe_events_timezone_choice()
+		 * @see wp_timezone_choice()
 		 *
 		 * @return string
 		 */
-		public function wp_timezone_choice_wo_manual_offsets( $timezone_choices, $selected_zone, $locale ) {
-			static $mo_loaded = false, $locale_loaded = null;
+		public function wp_timezone_choice_wo_manual_offsets( $timezone_choices, $selected_zone ) {
+			// explode() removes the delimiter so we have to add it back for allowed timezones.
+			$delimiter = '<optgroup';
 
-			$continents = array( 'Africa', 'America', 'Antarctica', 'Arctic', 'Asia', 'Atlantic', 'Australia', 'Europe', 'Indian', 'Pacific');
+			$optgroups = explode( $delimiter, $timezone_choices );
 
-			// Load translations for continents and cities.
-			if ( ! $mo_loaded || $locale !== $locale_loaded ) {
-				$locale_loaded = $locale ? $locale : get_locale();
-				$mofile = WP_LANG_DIR . '/continents-cities-' . $locale_loaded . '.mo';
-				unload_textdomain( 'continents-cities' );
-				load_textdomain( 'continents-cities', $mofile );
-				$mo_loaded = true;
-			}
+			$allowed_timezones = '';
 
-			$zones = array();
-			foreach ( timezone_identifiers_list() as $zone ) {
-				$zone = explode( '/', $zone );
-				if ( !in_array( $zone[0], $continents ) ) {
+			foreach ( $optgroups as $optgroup ) {
+				// If in the "Manual Offsets" optgroup, skip it... but we search by the option `value` instead of the `optgroup` to avoid translations.
+				if (
+					empty( $optgroup ) // the first array item is empty
+					|| false !== strpos( $optgroup, 'value="UTC-12"' )
+				) {
 					continue;
-				}
-
-				// This determines what gets set and translated - we don't translate Etc/* strings here, they are done later
-				$exists = array(
-					0 => ( isset( $zone[0] ) && $zone[0] ),
-					1 => ( isset( $zone[1] ) && $zone[1] ),
-					2 => ( isset( $zone[2] ) && $zone[2] ),
-				);
-				$exists[3] = ( $exists[0] && 'Etc' !== $zone[0] );
-				$exists[4] = ( $exists[1] && $exists[3] );
-				$exists[5] = ( $exists[2] && $exists[3] );
-
-				$zones[] = array(
-					'continent'   => ( $exists[0] ? $zone[0] : '' ),
-					'city'        => ( $exists[1] ? $zone[1] : '' ),
-					'subcity'     => ( $exists[2] ? $zone[2] : '' ),
-					't_continent' => ( $exists[3] ? translate( str_replace( '_', ' ', $zone[0] ), 'continents-cities' ) : '' ),
-					't_city'      => ( $exists[4] ? translate( str_replace( '_', ' ', $zone[1] ), 'continents-cities' ) : '' ),
-					't_subcity'   => ( $exists[5] ? translate( str_replace( '_', ' ', $zone[2] ), 'continents-cities' ) : '' )
-				);
-			}
-			usort( $zones, '_wp_timezone_choice_usort_callback' );
-
-			$structure = array();
-
-			if ( empty( $selected_zone ) ) {
-				$structure[] = '<option selected="selected" value="">' . __( 'Select a city', 'tribe-ext-only-city-based-timezones' ) . '</option>';
-			}
-
-			foreach ( $zones as $key => $zone ) {
-				// Build value in an array to join later
-				$value = array( $zone['continent'] );
-
-				if ( empty( $zone['city'] ) ) {
-					// It's at the continent level (generally won't happen)
-					$display = $zone['t_continent'];
 				} else {
-					// It's inside a continent group
-
-					// Continent optgroup
-					if ( !isset( $zones[$key - 1] ) || $zones[$key - 1]['continent'] !== $zone['continent'] ) {
-						$label = $zone['t_continent'];
-						$structure[] = '<optgroup label="'. esc_attr( $label ) .'">';
-					}
-
-					// Add the city to the value
-					$value[] = $zone['city'];
-
-					$display = $zone['t_city'];
-					if ( !empty( $zone['subcity'] ) ) {
-						// Add the subcity to the value
-						$value[] = $zone['subcity'];
-						$display .= ' - ' . $zone['t_subcity'];
-					}
-				}
-
-				// Build the value
-				$value = join( '/', $value );
-				$selected = '';
-				if ( $value === $selected_zone ) {
-					$selected = 'selected="selected" ';
-				}
-				$structure[] = '<option ' . $selected . 'value="' . esc_attr( $value ) . '">' . esc_html( $display ) . "</option>";
-
-				// Close continent optgroup
-				if ( !empty( $zone['city'] ) && ( !isset($zones[$key + 1]) || (isset( $zones[$key + 1] ) && $zones[$key + 1]['continent'] !== $zone['continent']) ) ) {
-					$structure[] = '</optgroup>';
+					// If not the "Manual Offsets" optgroup, include it as-is, adding back in the delimiter.
+					$allowed_timezones .= sprintf( '%s%s', $delimiter, $optgroup );
 				}
 			}
 
-			// Do UTC
-			$structure[] = '<optgroup label="'. esc_attr__( 'UTC', 'tribe-ext-only-city-based-timezones' ) .'">';
-			$selected = '';
-			if ( 'UTC' === $selected_zone )
-				$selected = 'selected="selected" ';
-			$structure[] = '<option ' . $selected . 'value="' . esc_attr( 'UTC' ) . '">' . __( 'UTC', 'tribe-ext-only-city-based-timezones' ) . '</option>';
-			$structure[] = '</optgroup>';
-
-			// Do !!! NOT !!! do manual UTC offsets, unlike wp_timezone_choice()
-
-			return join( "\n", $structure );
+			return $allowed_timezones;
 		}
 
 	} // end class

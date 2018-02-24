@@ -4,8 +4,8 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: The Events Calendar Extension: Only City-Based Timezones "
 "for Events\n"
-"POT-Creation-Date: 2018-02-22 13:53-0600\n"
-"PO-Revision-Date: 2018-02-22 13:53-0600\n"
+"POT-Creation-Date: 2018-02-23 21:22-0600\n"
+"PO-Revision-Date: 2018-02-23 21:22-0600\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,15 +21,6 @@ msgstr ""
 "_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
-
-#: tribe-ext-only-city-based-timezones.php:112
-msgid "Select a city"
-msgstr ""
-
-#: tribe-ext-only-city-based-timezones.php:157
-#: tribe-ext-only-city-based-timezones.php:161
-msgid "UTC"
-msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "The Events Calendar Extension: Only City-Based Timezones for Events"
