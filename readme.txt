@@ -1,4 +1,4 @@
-=== The Events Calendar Extension: Only City-Based Timezones for Events ===
+=== The Events Calendar Extension: Only Location-Based Time Zones ===
 Contributors: ModernTribe
 Donate link: http://m.tri.be/29
 Tags: events, calendar
@@ -9,13 +9,13 @@ Stable tag: 1.0.0
 License: GPL version 3 or any later version
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Only allow events to have city-based timezones. Manual UTC/GMT offsets cause more problems than they solve, particularly when it comes to Daylight Savings Time (DST).
+Only allow events to have location-based time zones. Manual UTC/GMT offsets can cause issues, particularly when it comes to Daylight Savings Time (DST).
 
 == Description ==
 
-Only allow events to have city-based timezones. Manual UTC/GMT offsets cause more problems than they solve, particularly when it comes to Daylight Savings Time (DST).
+Only allow events to have location-based time zones. Manual UTC/GMT offsets can cause issues, particularly when it comes to Daylight Savings Time (DST).
 
-This plugin will allow "UTC" and all city-based timezones (e.g. "America/Chicago") but will not allow manual offsets like "UTC+1".
+This plugin will allow "UTC" and all location-based time zones (e.g. "America/Chicago") but will not allow manual offsets like "UTC+1".
 
 == Installation ==
 
@@ -40,6 +40,6 @@ tends to be very limited.
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.0.0 2018-03-16 =
 
 * Initial release
