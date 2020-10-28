@@ -1,6 +1,6 @@
 {
     "name": "dawidurbanski/tribe-ext-only-location-time-zones",
-    "type": "wordpress-muplugin",
+    "type": "wordpress-plugin",
     "license": "MIT",
     "description": "Only allow events to have location-based time zones. Manual UTC/GMT offsets can cause issues, particularly when it comes to Daylight Savings Time (DST)",
     "authors": [
